@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.detection;
+package com.example.kepler.motiondetector.library_detection.detection;
 
 //import android.util.Log;
 

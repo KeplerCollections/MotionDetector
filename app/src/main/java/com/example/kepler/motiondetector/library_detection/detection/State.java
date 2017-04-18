@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.detection;
+package com.example.kepler.motiondetector.library_detection.detection;
 
 /**
  * This class is adapted from the web site below. It creates a state object

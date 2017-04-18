@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.detection;
+package com.example.kepler.motiondetector.library_detection.detection;
 
 import android.graphics.Color;
 
@@ -6,18 +6,19 @@ import android.graphics.Color;
 //import android.util.Log;
 
 /**
- * This class is used to process integer arrays containing Luma data and detects
+ * This class is used to process integer arrays containing RGB data and detects
  * motion.
  * 
  * @author Amit Kumar Jaiswal
  */
-public class LumaMotionDetection implements IMotionDetection {
+public class RgbMotionDetection implements IMotionDetection {
 
-    // private static final String TAG = "LumaMotionDetection";
+    // private static final String TAG = "RgbMotionDetection";
 
     // Specific settings
-    private static final int mPixelThreshold = 50; // Difference in luma value
+    private static final int mPixelThreshold = 50; // Difference in pixel (RGB)
     private static final int mThreshold = 10000; // Number of different pixels
+                                                 // (RGB)
 
     private static int[] mPrevious = null;
     private static int mPreviousWidth = 0;
@@ -70,13 +71,13 @@ public class LumaMotionDetection implements IMotionDetection {
     }
 
     /**
-     * Detect motion using comparing luma values. {@inheritDoc}
+     * Detect motion comparing RGB pixel values. {@inheritDoc}
      */
     @Override
-    public boolean detect(int[] luma, int width, int height) {
-        if (luma == null) throw new NullPointerException();
+    public boolean detect(int[] rgb, int width, int height) {
+        if (rgb == null) throw new NullPointerException();
 
-        int[] original = luma.clone();
+        int[] original = rgb.clone();
 
         // Create the "mPrevious" picture, the one that will be used to check
         // the next frame against.
@@ -89,7 +90,7 @@ public class LumaMotionDetection implements IMotionDetection {
         }
 
         // long bDetection = System.currentTimeMillis();
-        boolean motionDetected = isDifferent(luma, width, height);
+        boolean motionDetected = isDifferent(rgb, width, height);
         // long aDetection = System.currentTimeMillis();
         // Log.d(TAG, "Detection "+(aDetection-bDetection));
 

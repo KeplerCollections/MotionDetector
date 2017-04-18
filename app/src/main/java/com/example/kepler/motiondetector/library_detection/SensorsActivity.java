@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector;
+package com.example.kepler.motiondetector.library_detection;
 
 import android.app.Activity;
 import android.hardware.Sensor;
@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 
-import com.example.kepler.motiondetector.data.GlobalData;
+import com.example.kepler.motiondetector.library_detection.data.GlobalData;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;

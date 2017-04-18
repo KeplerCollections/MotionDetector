@@ -15,9 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.kepler.motiondetector.MotionDetectionActivity;
+import com.example.kepler.motiondetector.library_detection.MotionDetectionActivity;
 import com.example.kepler.motiondetector.R;
-import com.example.kepler.motiondetector.Splash;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -37,7 +36,7 @@ public class FingerprintActivity extends AppCompatActivity {
 
     private KeyStore keyStore;
     // Variable used for storing the key in the Android Keystore container
-    private static final String KEY_NAME = "androidHive";
+    private static final String KEY_NAME = "Dedector";
     private Cipher cipher;
     private TextView textView;
 

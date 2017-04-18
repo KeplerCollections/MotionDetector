@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector;
+package com.example.kepler.motiondetector.library_detection;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,26 +13,26 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.kepler.motiondetector.data.GlobalData;
-import com.example.kepler.motiondetector.data.Preferences;
-import com.example.kepler.motiondetector.detection.AggregateLumaMotionDetection;
-import com.example.kepler.motiondetector.detection.IMotionDetection;
-import com.example.kepler.motiondetector.detection.LumaMotionDetection;
-import com.example.kepler.motiondetector.detection.RgbMotionDetection;
-import com.example.kepler.motiondetector.image.ImageProcessing;
+import com.example.kepler.motiondetector.R;
+import com.example.kepler.motiondetector.fingerprint.FingerprintHandler;
+import com.example.kepler.motiondetector.library_detection.data.GlobalData;
+import com.example.kepler.motiondetector.library_detection.data.Preferences;
+import com.example.kepler.motiondetector.library_detection.detection.AggregateLumaMotionDetection;
+import com.example.kepler.motiondetector.library_detection.detection.IMotionDetection;
+import com.example.kepler.motiondetector.library_detection.detection.LumaMotionDetection;
+import com.example.kepler.motiondetector.library_detection.detection.RgbMotionDetection;
+import com.example.kepler.motiondetector.library_detection.image.ImageProcessing;
 import com.example.kepler.motiondetector.mail.Mail;
 import com.example.kepler.motiondetector.mail.OnSavePic;
 import com.example.kepler.motiondetector.utils.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 
-import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -63,8 +63,8 @@ public class MotionDetectionActivity extends SensorsActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        final SharedPreferences preferences = getSharedPreferences("userss", 0);
-        mEmail=preferences.getString("user","developer.kepler@gmail.com");
+        final SharedPreferences preferences = getSharedPreferences(Preferences.SHRD_PREF_KEY, 0);
+        mEmail=preferences.getString(Preferences.USER,null);
         onSavePic = new OnSavePic() {
             @Override
             public void sendMessage(File file) {
@@ -335,11 +335,15 @@ public class MotionDetectionActivity extends SensorsActivity {
     private void sendMail(String path) {
         try {
             Log.e(TAG, path);
+            if(mEmail==null){
+                Toast.makeText(getApplicationContext(), "No recipients are found. Please install app again");
+                return;
+            }
             String[] recipients = {mEmail};
             SendEmailAsyncTask email = new SendEmailAsyncTask();
             email.activity = MotionDetectionActivity.this;
-            email.m = new Mail("developer.kepler@gmail.com", "Developer@");
-            email.m.set_from("developer.kepler@gmail.com");
+            email.m = new Mail(Preferences.USER_NAME, Preferences.PASSWORD);
+            email.m.set_from(Preferences.USER_NAME);
             email.m.setBody("New motion detected");
             email.m.set_to(recipients);
             email.m.set_subject("Detect Motion");

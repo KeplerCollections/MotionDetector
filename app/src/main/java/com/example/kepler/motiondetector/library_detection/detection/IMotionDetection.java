@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.detection;
+package com.example.kepler.motiondetector.library_detection.detection;
 
 /**
  * This interface is used to represent a class that can detect motion

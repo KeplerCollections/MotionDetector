@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.data;
+package com.example.kepler.motiondetector.library_detection.data;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -1,4 +1,4 @@
-package com.example.kepler.motiondetector.image;
+package com.example.kepler.motiondetector.library_detection.image;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

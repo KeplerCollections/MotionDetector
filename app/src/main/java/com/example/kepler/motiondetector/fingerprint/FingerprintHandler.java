@@ -10,11 +10,11 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.AsyncTask;
 import android.os.CancellationSignal;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.example.kepler.motiondetector.MotionDetectionActivity;
+import com.example.kepler.motiondetector.library_detection.MotionDetectionActivity;
 import com.example.kepler.motiondetector.R;
+import com.example.kepler.motiondetector.library_detection.data.Preferences;
 import com.example.kepler.motiondetector.mail.Mail;
 import com.example.kepler.motiondetector.utils.Toast;
 
@@ -33,7 +33,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     // Constructor
     public FingerprintHandler(Context mContext) {
         context = mContext;
-        preferences = context.getSharedPreferences("userss", 0);
+        preferences = context.getSharedPreferences(Preferences.SHRD_PREF_KEY, 0);
     }
 
     public void startAuth(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
@@ -79,10 +79,14 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     private void sendMail() {
         try {
-            String[] recipients = {preferences.getString("user","developer.kepler@gmail.com")};
+            if(preferences.getString(Preferences.USER,null)==null){
+                Toast.makeText(context, "No recipients are found. Please install app again");
+                return;
+            }
+            String[] recipients = {preferences.getString(Preferences.USER,null)};
             SendEmailAsyncTask email = new SendEmailAsyncTask();
-            email.m = new Mail("developer.kepler@gmail.com", "Developer@");
-            email.m.set_from("developer.kepler@gmail.com");
+            email.m = new Mail(Preferences.USER_NAME, Preferences.PASSWORD);
+            email.m.set_from(Preferences.USER_NAME);
             email.m.setBody("Fingerprint Error");
             email.m.set_to(recipients);
             email.m.set_subject("Login Attempted");

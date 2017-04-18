@@ -4,38 +4,26 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v13.app.ActivityCompat;
-import android.support.v13.app.FragmentCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,13 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kepler.motiondetector.fingerprint.FingerprintActivity;
+import com.example.kepler.motiondetector.library_detection.MotionDetectionActivity;
+import com.example.kepler.motiondetector.library_detection.data.Preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//import static android.Manifest.permission.READ_CONTACTS;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.Manifest.permission.CAMERA;
 
 /**
  * A login screen that offers login via email/password.
@@ -61,24 +45,8 @@ public class LoginActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    private static final String DIALOG = "Dialog";
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserLoginTask mAuthTask = null;
 
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -124,10 +92,10 @@ public class LoginActivity extends AppCompatActivity {
                     || ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this, permissionsRequired[1])) {
                 //Show Information about why you need the permission
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                builder.setTitle("Need Multiple Permissions");
+                builder.setTitle(R.string.need_multiple);
                 builder.setCancelable(false);
-                builder.setMessage("This app needs Camera and Storage permissions.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                builder.setMessage(R.string.need_permission);
+                builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -145,10 +113,10 @@ public class LoginActivity extends AppCompatActivity {
                 //Previously Permission Request was cancelled with 'Dont Ask Again',
                 // Redirect to Settings after showing Information about why you need the permission
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                builder.setTitle("Need Multiple Permissions");
+                builder.setTitle(R.string.need_multiple);
                 builder.setCancelable(false);
-                builder.setMessage("This app needs Camera and Storage permissions.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                builder.setMessage(R.string.need_permission);
+                builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -157,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                         Uri uri = Uri.fromParts("package", getPackageName(), null);
                         intent.setData(uri);
                         startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                        Toast.makeText(getBaseContext(), "Go to Permissions to Grant  Camera and Location", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "Go to Permissions to Grant  Camera and Storage", Toast.LENGTH_LONG).show();
                     }
                 });
 //                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -212,9 +180,9 @@ public class LoginActivity extends AppCompatActivity {
                     || ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,permissionsRequired[1])){
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 builder.setCancelable(false);
-                builder.setTitle("Need Multiple Permissions");
-                builder.setMessage("This app needs Camera and Storage permissions.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                builder.setTitle(R.string.need_multiple);
+                builder.setMessage(R.string.need_permission);
+                builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -246,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void proceedAfterPermission() {
-        Toast.makeText(getBaseContext(), "We got All Permissions", Toast.LENGTH_LONG).show();
+//        Toast.makeText(getBaseContext(), "We got All Permissions", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -298,8 +266,8 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             if(ActivityCompat.checkSelfPermission(LoginActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
                     || ActivityCompat.checkSelfPermission(LoginActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(getBaseContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
-            }else{
+                requestPermission();
+                 }else{
                 showProgress(true);
                 mAuthTask = new UserLoginTask(email, password);
                 mAuthTask.execute((Void) null);
@@ -377,8 +345,8 @@ public class LoginActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 return false;
             }
-            SharedPreferences preferences = getSharedPreferences("userss", 0);
-            preferences.edit().putString("user", mEmail).commit();
+            SharedPreferences preferences = getSharedPreferences(Preferences.SHRD_PREF_KEY, 0);
+            preferences.edit().putString(Preferences.USER, mEmail).commit();
 //            for (String credential : DUMMY_CREDENTIALS) {
 //                String[] pieces = credential.split(":");
 //                if (pieces[0].equals(mEmail)) {

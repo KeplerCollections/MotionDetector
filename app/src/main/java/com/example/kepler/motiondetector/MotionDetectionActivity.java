@@ -54,7 +54,6 @@ public class MotionDetectionActivity extends SensorsActivity {
     private static IMotionDetection detector = null;
     private static volatile AtomicBoolean processing = new AtomicBoolean(false);
     private static OnSavePic onSavePic;
-    private boolean isTrue = false;
     private String mEmail;
 
     /**
@@ -336,12 +335,9 @@ public class MotionDetectionActivity extends SensorsActivity {
     private void sendMail(String path) {
         try {
             Log.e(TAG, path);
-            if (isTrue)
-                return;
-            isTrue = true;
             String[] recipients = {mEmail};
             SendEmailAsyncTask email = new SendEmailAsyncTask();
-//            email.activity = MotionDetectionActivity.this;
+            email.activity = MotionDetectionActivity.this;
             email.m = new Mail("developer.kepler@gmail.com", "Developer@");
             email.m.set_from("developer.kepler@gmail.com");
             email.m.setBody("New motion detected");
@@ -358,7 +354,7 @@ public class MotionDetectionActivity extends SensorsActivity {
 
     class SendEmailAsyncTask extends AsyncTask<Void, Void, String> {
         Mail m;
-//        MotionDetectionActivity activity;
+        MotionDetectionActivity activity;
 
         public SendEmailAsyncTask() {
         }
@@ -388,7 +384,6 @@ public class MotionDetectionActivity extends SensorsActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            isTrue=false;
             Toast.makeText(getApplicationContext(), s);
         }
 
